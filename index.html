@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карта входа в К4</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F5EFE4;
+    --warm-white: #FAF6F0;
+    --gold: #C4A46B;
+    --gold-light: #D9BC8A;
+    --charcoal: #2C2420;
+    --muted: #8A7A70;
+    --blush: #E8D5C4;
+    --deep: #1A1210;
+  }
+
+  body {
+    background: var(--cream);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    color: var(--charcoal);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BANNER */
+  .banner {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    background: var(--deep);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .banner-bg {
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 50% 30%, #3D2B1F 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 80% 80%, #C4A46B22 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 20% 70%, #8B5E3C18 0%, transparent 60%),
+      #120D0A;
+  }
+
+  .banner-ornament {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    height: 320px;
+    border: 1px solid #C4A46B22;
+    border-radius: 50%;
+    animation: rotate 30s linear infinite;
+  }
+  .banner-ornament::before {
+    content: '';
+    position: absolute;
+    inset: 20px;
+    border: 1px solid #C4A46B15;
+    border-radius: 50%;
+  }
+  @keyframes rotate { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+  .banner-lines {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      repeating-linear-gradient(0deg, transparent, transparent 59px, #C4A46B08 60px);
+  }
+
+  .banner-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 24px;
+    animation: fadeUp 1.2s ease both;
+  }
+
+  .banner-eyebrow {
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    opacity: 0.85;
+  }
+
+  .banner-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 10vw, 88px);
+    font-weight: 300;
+    color: #F5EFE4;
+    line-height: 0.9;
+    letter-spacing: -1px;
+  }
+
+  .banner-title em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .banner-subtitle {
+    margin-top: 22px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-style: italic;
+    color: #C4A46B99;
+    letter-spacing: 0.5px;
+  }
+
+  .banner-cards {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    animation: fadeUp 1.4s ease both;
+  }
+
+  .card-chip {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #C4A46B66;
+    border: 1px solid #C4A46B33;
+    padding: 5px 10px;
+    font-family: 'Jost', sans-serif;
+  }
+
+  /* FORM CONTAINER */
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 64px 24px 80px;
+  }
+
+  .intro {
+    text-align: center;
+    margin-bottom: 56px;
+    animation: fadeUp 0.8s ease 0.3s both;
+  }
+
+  .intro-line {
+    display: block;
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    margin: 0 auto 28px;
+  }
+
+  .intro p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* STEPS */
+  .steps-nav {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 48px;
+  }
+
+  .step-dot {
+    width: 28px;
+    height: 2px;
+    background: var(--blush);
+    transition: background 0.4s, width 0.4s;
+    cursor: pointer;
+  }
+
+  .step-dot.active {
+    background: var(--gold);
+    width: 40px;
+  }
+
+  .step-dot.done {
+    background: var(--gold-light);
+  }
+
+  /* QUESTION CARDS */
+  .question-wrap {
+    display: none;
+    animation: fadeUp 0.6s ease both;
+  }
+  .question-wrap.visible {
+    display: block;
+  }
+
+  .question-card {
+    background: var(--warm-white);
+    border: 1px solid #DDD4C4;
+    padding: 48px 40px;
+    position: relative;
+  }
+
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--gold), var(--blush));
+  }
+
+  .question-num {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  .question-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--charcoal);
+    line-height: 1.35;
+    margin-bottom: 8px;
+  }
+
+  .question-hint {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    font-style: italic;
+  }
+
+  .field-input {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #DDD4C4;
+    background: transparent;
+    padding: 14px 0;
+    font-family: 'Jost', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--charcoal);
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .field-input:focus {
+    border-bottom-color: var(--gold);
+  }
+
+  .field-input::placeholder {
+    color: #C4BAB0;
+    font-style: italic;
+  }
+
+  textarea.field-input {
+    resize: none;
+    min-height: 100px;
+    padding-top: 4px;
+  }
+
+  /* BUTTONS */
+  .btn-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 36px;
+    gap: 16px;
+  }
+
+  .btn-back {
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 0;
+    transition: color 0.3s;
+  }
+
+  .btn-back:hover { color: var(--charcoal); }
+
+  .btn-next {
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--warm-white);
+    background: var(--charcoal);
+    border: none;
+    cursor: pointer;
+    padding: 16px 36px;
+    transition: background 0.3s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-next::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, #C4A46B22 100%);
+  }
+
+  .btn-next:hover {
+    background: #3D2B1F;
+    transform: translateY(-1px);
+  }
+
+  .btn-next:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* FINAL SCREEN */
+  .final-screen {
+    display: none;
+    text-align: center;
+    padding: 48px 0;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .final-screen.visible { display: block; }
+
+  .final-icon {
+    width: 72px;
+    height: 72px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    margin: 0 auto 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    animation: pulse 2s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 #C4A46B33; }
+    50% { box-shadow: 0 0 0 12px transparent; }
+  }
+
+  .final-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px;
+    font-weight: 300;
+    color: var(--charcoal);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .final-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .final-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 400px;
+    margin: 0 auto 36px;
+  }
+
+  .final-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .final-card-chip {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold-light);
+    padding: 7px 14px;
+    font-family: 'Jost', sans-serif;
+    opacity: 0;
+    animation: chipFade 0.4s ease forwards;
+  }
+
+  .final-card-chip:nth-child(1) { animation-delay: 0.2s; }
+  .final-card-chip:nth-child(2) { animation-delay: 0.4s; }
+  .final-card-chip:nth-child(3) { animation-delay: 0.6s; }
+  .final-card-chip:nth-child(4) { animation-delay: 0.8s; }
+  .final-card-chip:nth-child(5) { animation-delay: 1.0s; }
+  .final-card-chip:nth-child(6) { animation-delay: 1.2s; }
+  .final-card-chip:nth-child(7) { animation-delay: 1.4s; }
+
+  @keyframes chipFade {
+    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(8px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .question-card { padding: 32px 24px; }
+    .banner { height: 340px; }
+    .banner-cards { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- BANNER -->
+<div class="banner">
+  <div class="banner-bg"></div>
+  <div class="banner-lines"></div>
+  <div class="banner-ornament"></div>
+  <div class="banner-content">
+    <div class="banner-eyebrow">Клан читательниц БЧДТ</div>
+    <div class="banner-title">К<em>4</em></div>
+    <div class="banner-subtitle">медианавигатор читательницы</div>
+  </div>
+  <div class="banner-cards">
+    <span class="card-chip">СПА</span>
+    <span class="card-chip">Духовное</span>
+    <span class="card-chip">Материальное</span>
+    <span class="card-chip">Online</span>
+    <span class="card-chip">Offline</span>
+    <span class="card-chip">Бонусы</span>
+    <span class="card-chip">Комбо</span>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="container">
+
+  <div class="intro">
+    <span class="intro-line"></span>
+    <p>Прежде чем ты получишь свои 7 карт месяца&nbsp;—<br>нам важно познакомиться.<br>Это первый шаг твоего маршрута.</p>
+  </div>
+
+  <div class="steps-nav" id="stepsNav">
+    <div class="step-dot active" onclick="goTo(0)"></div>
+    <div class="step-dot" onclick="goTo(1)"></div>
+    <div class="step-dot" onclick="goTo(2)"></div>
+    <div class="step-dot" onclick="goTo(3)"></div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="question-wrap visible" id="q0">
+    <div class="question-card">
+      <div class="question-num">Карта 01 / 04</div>
+      <div class="question-text">Как нам тебя называть?</div>
+      <div class="question-hint">Имя, ник — как тебе откликается</div>
+      <input class="field-input" type="text" id="f0" placeholder="Твоё имя..." oninput="checkField(0)">
+    </div>
+    <div class="btn-row">
+      <span></span>
+      <button class="btn-next" id="btn0" onclick="next(0)" disabled>Дальше →</button>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="question-wrap" id="q1">
+    <div class="question-card">
+      <div class="question-num">Карта 02 / 04</div>
+      <div class="question-text">Куда написать, когда К4 откроет двери?</div>
+      <div class="question-hint">Telegram, номер телефона — что удобнее</div>
+      <input class="field-input" type="text" id="f1" placeholder="@username или +7..." oninput="checkField(1)">
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="back(1)">← Назад</button>
+      <button class="btn-next" id="btn1" onclick="next(1)" disabled>Дальше →</button>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="question-wrap" id="q2">
+    <div class="question-card">
+      <div class="question-num">Карта 03 / 04</div>
+      <div class="question-text">Почему ты здесь — среди первых?</div>
+      <div class="question-hint">Нет правильного ответа. Только твой</div>
+      <textarea class="field-input" id="f2" placeholder="Напиши, что чувствуешь..." oninput="checkField(2)"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="back(2)">← Назад</button>
+      <button class="btn-next" id="btn2" onclick="next(2)" disabled>Дальше →</button>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="question-wrap" id="q3">
+    <div class="question-card">
+      <div class="question-num">Карта 04 / 04</div>
+      <div class="question-text">Что ты хочешь найти в К4?</div>
+      <div class="question-hint">Тело, тишину, смыслы, живое общение, красоту — или всё сразу. Можно честно</div>
+      <textarea class="field-input" id="f3" placeholder="Мои ожидания..." oninput="checkField(3)"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="back(3)">← Назад</button>
+      <button class="btn-next" id="btn3" onclick="submit()" disabled>Отправить карту</button>
+    </div>
+  </div>
+
+  <!-- FINAL -->
+  <div class="final-screen" id="finalScreen">
+    <div class="final-icon">✦</div>
+    <div class="final-title">Твоя карта<br>входа <em>принята</em></div>
+    <div class="final-text">Скоро мы напишем — и К4 станет твоим пространством. Семь карт уже ждут тебя.</div>
+    <div class="final-cards">
+      <span class="final-card-chip">Карта СПА</span>
+      <span class="final-card-chip">Карта бонусов</span>
+      <span class="final-card-chip">Карта материального</span>
+      <span class="final-card-chip">Карта духовного</span>
+      <span class="final-card-chip">Карта Online</span>
+      <span class="final-card-chip">Карта Offline</span>
+      <span class="final-card-chip">Карта КОМБО</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let current = 0;
+
+  function checkField(idx) {
+    const val = document.getElementById('f' + idx).value.trim();
+    document.getElementById('btn' + idx).disabled = val.length < 2;
+  }
+
+  function goTo(idx) {
+    document.getElementById('q' + current).classList.remove('visible');
+    current = idx;
+    document.getElementById('q' + current).classList.add('visible');
+    updateNav();
+    window.scrollTo({ top: document.querySelector('.intro').offsetTop - 40, behavior: 'smooth' });
+  }
+
+  function next(idx) {
+    document.getElementById('q' + idx).classList.remove('visible');
+    current = idx + 1;
+    document.getElementById('q' + current).classList.add('visible');
+    updateNav();
+    window.scrollTo({ top: document.querySelector('.intro').offsetTop - 40, behavior: 'smooth' });
+  }
+
+  function back(idx) {
+    document.getElementById('q' + idx).classList.remove('visible');
+    current = idx - 1;
+    document.getElementById('q' + current).classList.add('visible');
+    updateNav();
+  }
+
+  function updateNav() {
+    const dots = document.querySelectorAll('.step-dot');
+    dots.forEach((d, i) => {
+      d.className = 'step-dot';
+      if (i < current) d.classList.add('done');
+      if (i === current) d.classList.add('active');
+    });
+  }
+
+  async function submit() {
+    const btn = document.getElementById('btn3');
+    btn.disabled = true;
+    btn.textContent = 'Отправляем...';
+
+    const data = {
+      name:         document.getElementById('f0').value.trim(),
+      contact:      document.getElementById('f1').value.trim(),
+      why:          document.getElementById('f2').value.trim(),
+      expectations: document.getElementById('f3').value.trim()
+    };
+
+    try {
+      await fetch('https://script.google.com/macros/s/AKfycbyQhYyVI1r6eS6pTRgsmongRersnJ-Y5I4tpslMUZxXULwW6i9XMjxAfDQbKCVH97Nj-A/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+    } catch (e) {
+      console.error(e);
+    }
+
+    document.getElementById('q3').classList.remove('visible');
+    document.getElementById('stepsNav').style.display = 'none';
+    document.querySelector('.intro').style.display = 'none';
+    document.getElementById('finalScreen').classList.add('visible');
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
